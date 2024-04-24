@@ -1,5 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { requestContacts } from '../services/api';
+import {
+  requestAddContact,
+  requestContacts,
+  requestDeleteContact,
+} from '../services/api';
 
 // fetchContacts - одержання масиву контактів (метод GET) запитом. Базовий тип екшену це рядок "contacts/fetchAll".
 export const fetchContacts = createAsyncThunk(
@@ -9,7 +13,7 @@ export const fetchContacts = createAsyncThunk(
       const data = await requestContacts();
       return data;
     } catch (err) {
-      thankAPI.rejectWithValue(err.message);
+      return thankAPI.rejectWithValue(err.message);
     }
   },
 );
@@ -17,10 +21,12 @@ export const fetchContacts = createAsyncThunk(
 // addContact - додавання нового контакту (метод POST). Базовий тип екшену це рядок "contacts/addContact".
 export const addContact = createAsyncThunk(
   'contacts/addContact',
-  async (_, thankAPI) => {
+  async (contact, thankAPI) => {
     try {
+      const data = await requestAddContact(contact);
+      return data;
     } catch (err) {
-      thankAPI.rejectWithValue(err.message);
+      return thankAPI.rejectWithValue(err.message);
     }
   },
 );
@@ -28,10 +34,12 @@ export const addContact = createAsyncThunk(
 // deleteContact - видалення контакту по ID (метод DELETE). Базовий тип екшену це рядок "contacts/deleteContact".
 export const deleteContact = createAsyncThunk(
   'contacts/deleteContact',
-  async (id, thankAPI) => {
+  async (contactId, thankAPI) => {
     try {
+      const data = await requestDeleteContact(contactId);
+      return data.id;
     } catch (err) {
-      thankAPI.rejectWithValue(err.message);
+      return thankAPI.rejectWithValue(err.message);
     }
   },
 );

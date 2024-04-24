@@ -1,8 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-// import initialContacts from '../contactsList.json';
-
-import { fetchContacts } from './contactsOps';
+import { fetchContacts, addContact, deleteContact } from './contactsOps';
 
 const INITIAL_STATE = {
   items: [],
@@ -10,44 +8,50 @@ const INITIAL_STATE = {
   error: null,
 };
 
+const handlePending = state => {
+  state.loading = true;
+  state.error = false;
+};
+
+const handleRejected = state => {
+  state.loading = false;
+  state.error = true;
+};
+
 export const contactsSlice = createSlice({
   // Ім'я слайсу
   name: 'contacts',
   // Початковий стан редюсера слайсу
   initialState: INITIAL_STATE,
-  // Об'єкт редюсерів
-  // reducers: {
-  //   addContact(state, action) {
-  //     state.items.push(action.payload);
-  //   },
-  //   deleteContact(state, action) {
-  //     state.items = state.items.filter(
-  //       contact => contact.id !== action.payload,
-  //     );
-  //   },
-  // },
-  // Об'єкт редюсерів для асинхронних генераторів екшенів
+
   extraReducers: builder =>
     builder
-      .addCase(fetchContacts.pending, state => {
-        state.loading = true;
-        state.error = false;
-      })
+      .addCase(fetchContacts.pending, handlePending)
       .addCase(fetchContacts.fulfilled, (state, action) => {
         state.loading = false;
         state.items = action.payload;
       })
-      .addCase(fetchContacts.rejected, state => {
+      .addCase(fetchContacts.rejected, handleRejected)
+      .addCase(addContact.pending, handlePending)
+      .addCase(addContact.fulfilled, (state, action) => {
         state.loading = false;
-        state.error = true;
-      }),
+        state.items.push(action.payload);
+      })
+      .addCase(addContact.rejected, handleRejected)
+      .addCase(deleteContact.pending, handlePending)
+      .addCase(deleteContact.fulfilled, (state, action) => {
+        state.loading = false;
+        state.items = state.items.filter(
+          contact => contact.id !== action.payload,
+        );
+      })
+      .addCase(deleteContact.rejected, handleRejected),
 });
-
-// Генератори Action Creator
-export const { addContact, deleteContact } = contactsSlice.actions;
 
 // Редюсер слайсу
 export const contactsReducer = contactsSlice.reducer;
 
 // функції-селектори для використання в useSelector
 export const selectContacts = state => state.contacts.items;
+export const selectLoading = state => state.contacts.loading;
+export const selectError = state => state.contacts.error;
