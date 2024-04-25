@@ -5,41 +5,41 @@ import {
   requestDeleteContact,
 } from '../services/api';
 
-// fetchContacts - одержання масиву контактів (метод GET) запитом. Базовий тип екшену це рядок "contacts/fetchAll".
+// fetchContacts - одержання масиву контактів (метод GET) запитом.
 export const fetchContacts = createAsyncThunk(
-  'fetchContacts',
-  async (_, thankAPI) => {
+  'contacts/fetchAll',
+  async (_, thunkAPI) => {
     try {
       const data = await requestContacts();
       return data;
     } catch (err) {
-      return thankAPI.rejectWithValue(err.message);
+      return thunkAPI.rejectWithValue(err.message);
     }
   },
 );
 
-// addContact - додавання нового контакту (метод POST). Базовий тип екшену це рядок "contacts/addContact".
+// addContact - додавання нового контакту (метод POST).
 export const addContact = createAsyncThunk(
   'contacts/addContact',
-  async (contact, thankAPI) => {
+  async (contact, thunkAPI) => {
     try {
       const data = await requestAddContact(contact);
       return data;
     } catch (err) {
-      return thankAPI.rejectWithValue(err.message);
+      return thunkAPI.rejectWithValue(err.message);
     }
   },
 );
 
-// deleteContact - видалення контакту по ID (метод DELETE). Базовий тип екшену це рядок "contacts/deleteContact".
+// deleteContact - видалення контакту по ID (метод DELETE).
 export const deleteContact = createAsyncThunk(
   'contacts/deleteContact',
-  async (contactId, thankAPI) => {
+  async (contactId, thunkAPI) => {
     try {
       const data = await requestDeleteContact(contactId);
       return data.id;
     } catch (err) {
-      return thankAPI.rejectWithValue(err.message);
+      return thunkAPI.rejectWithValue(err.message);
     }
   },
 );
